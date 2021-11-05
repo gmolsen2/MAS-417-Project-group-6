@@ -1,3 +1,8 @@
 numpy
 Pillow
 requests
+stl
+mesh
+matplotlib
+numpy-stl
+
