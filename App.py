@@ -7,14 +7,13 @@ import numpy as np
 import requests
 from PIL import Image
 from stl import mesh
-#import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from matplotlib import pyplot
 
 
 #Const Input
 MAX_HEIGHT=100                                                     #This controls amplification factor for height
-SQ = 5                                                             # This controls size of printout area, sq is side of square in kilometers
+SQ = 5                                                             # This controls size of printout area, SQ is side of square in kilometers
 
 
 def import_lat():
