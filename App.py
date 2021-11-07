@@ -12,13 +12,12 @@ from mpl_toolkits import mplot3d
 from matplotlib import pyplot
 
 
-#Input
-MAX_HEIGHT=100
-#height=0 for minpix
-#height=maxheight for maxpix
+#Const Input
+MAX_HEIGHT=100                                                     #This controls amplification factor for height
+SQ = 5                                                             # This controls size of printout area, sq is side of square in kilometers
+
 
 def import_lat():
-    """
     print('Please input desired latitude within mainland Norway, "north-south direction" http://bboxfinder.com/#0.000000,0.000000,0.000000,0.000000')
     lat = float(input())
     #Suggested value: lat = 59.85
@@ -28,13 +27,11 @@ def import_lat():
     else:
         print('Latitude out of bounds. Value needs to be between 57 and 71')
         import_lat()
-    """
-    lat = 59.85
+
     return lat
 
 
 def import_lon():
-    """
     print('Please input desired longitude within mainland Norway')
     lon = float(input())
     #Suggested value: lon = 8.65
@@ -44,16 +41,14 @@ def import_lon():
     else:
         print('Longitude out of bounds. Value needs to be between 2 and 32.8')
         import_lon()
-    """
-    lon = 8.65
+
     return lon
 
 
 def get_image(lat, lon):
 
     #Bounding box calculations
-    sq = 5                                                             # This controls size of printout area, sq is side of square in kilometers
-    corner_const = 90 * sq / 22000
+    corner_const = 90 * SQ / 22000
     BBY = [lon - corner_const * 2, lon + corner_const * 2]
     BBX = [lat - corner_const, lat + corner_const]
 
@@ -83,7 +78,7 @@ def get_image(lat, lon):
 
 
 # Create the image class based x = lat , y = lon, get_image funtion that gets image based on x and y
-class MyImage:
+class ImageSetup:
   def __init__(self, x, y):
     self.x = x
     self.y = y
@@ -94,7 +89,9 @@ class MyImage:
     self.grey_img = img.convert('L')  # Do not remove - For some reason it needs to be here even though API already sends greyscale image
     return self.grey_img
 
+    #values needed for further calculations
   def vector_info(self):
+    # Define the 4 vertices of the surface
     imageNP = np.array(self.grey_img)
     maxPix = imageNP.max()
     minPix = imageNP.min()
@@ -109,37 +106,36 @@ class MyImage:
     return d
 
 
-
-first_image = MyImage(import_lat(), import_lon())
+#Program starts here
+first_image = ImageSetup(import_lat(), import_lon())
 grey_img = first_image.greyscale()
 vector_info = first_image.vector_info()
 verticies = np.zeros((vector_info['nrows'], vector_info['ncols'], 3))
 
-# Define the 4 vertices of the surface
 
-
-#info for making vectors
-
+#Create z height
 for x in range(0,vector_info['ncols']):
     for y in range(0,vector_info['nrows']):
-        pixelIntensity= vector_info['imageNP'][y][x]
+        pixelIntensity = vector_info['imageNP'][y][x]
         z = (pixelIntensity * MAX_HEIGHT) / vector_info['maxPix']
         #coordinates
         verticies[y][x]=(x,y,z)
 faces=[]
 
-for x in range(0, vector_info['ncols']-1):
-  for y in range(0, vector_info['nrows']-1):
+
+#Creates verticies given height and surrounding heights
+for x in range(0, vector_info['ncols'] - 1):
+  for y in range(0, vector_info['nrows'] - 1):
 
        #create face1
-    vertice1=verticies[y][x]
-    vertice2=verticies[y+1][x]
-    vertice3=verticies[y+1][x+1]
-    face1=np.array([vertice1,vertice2,vertice3])
+    vertice1 = verticies[y][x]
+    vertice2 = verticies[y + 1][x]
+    vertice3 = verticies[y + 1][x + 1]
+    face1 = np.array([vertice1,vertice2,vertice3])
        #create face 2
     vertice1 = verticies[y][x]
-    vertice2 = verticies[y][x+1]
-    vertice3 = verticies[y+1][x+1]
+    vertice2 = verticies[y][x + 1]
+    vertice3 = verticies[y + 1][x + 1]
 
     face2 = np.array([vertice1, vertice2, vertice3])
 
@@ -147,7 +143,7 @@ for x in range(0, vector_info['ncols']-1):
     faces.append(face2)
 print(f"number of faces:{len(faces)}")
 
-facesNP= np.array(faces)
+facesNP = np.array(faces)
 
 
 # Create the mesh
@@ -176,4 +172,3 @@ axes.auto_scale_xyz(scale, scale, scale)
 
 # Show the plot to the screen
 pyplot.show()
-
