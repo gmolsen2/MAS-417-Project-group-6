@@ -12,7 +12,13 @@ from mpl_toolkits import mplot3d
 from matplotlib import pyplot
 
 
+#Input
+MAX_HEIGHT=100
+#height=0 for minpix
+#height=maxheight for maxpix
+
 def import_lat():
+    """
     print('Please input desired latitude within mainland Norway, "north-south direction" http://bboxfinder.com/#0.000000,0.000000,0.000000,0.000000')
     lat = float(input())
     #Suggested value: lat = 59.85
@@ -22,11 +28,13 @@ def import_lat():
     else:
         print('Latitude out of bounds. Value needs to be between 57 and 71')
         import_lat()
-
+    """
+    lat = 59.85
     return lat
 
 
 def import_lon():
+    """
     print('Please input desired longitude within mainland Norway')
     lon = float(input())
     #Suggested value: lon = 8.65
@@ -36,7 +44,8 @@ def import_lon():
     else:
         print('Longitude out of bounds. Value needs to be between 2 and 32.8')
         import_lon()
-
+    """
+    lon = 8.65
     return lon
 
 
@@ -88,32 +97,20 @@ first_image = MyImage(import_lat(), import_lon())
 
 img = first_image.img
 grey_img = img.convert('L')
-#grey_img.show()
-#print(grey_img.size)
 
-max_size=(500,500)
-max_height=100
-min_height=0
-#height=0 for minpix
-#height=maxheight for maxpix
 
-#resize
-grey_img.thumbnail(max_size)
+
+#info for making vectors
 imageNP= np.array(grey_img)
 maxPix = imageNP.max()
 minPix = imageNP.min()
-
-#print(imageNP)
-
-
 (ncols,nrows)=grey_img.size
-
 verticies=np.zeros((nrows,ncols,3))
 
 for x in range(0,ncols):
     for y in range(0,nrows):
         pixelIntensity= imageNP[y][x]
-        z = (pixelIntensity * max_height) / maxPix
+        z = (pixelIntensity * MAX_HEIGHT) / maxPix
         #coordinates
         verticies[y][x]=(x,y,z)
 faces=[]
