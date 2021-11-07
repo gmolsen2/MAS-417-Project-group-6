@@ -89,34 +89,47 @@ class MyImage:
     self.y = y
     self.img = get_image(x,y)
 
+  def greyscale(self):
+    img = self.img
+    self.grey_img = img.convert('L')  # Do not remove - For some reason it needs to be here even though API already sends greyscale image
+    return self.grey_img
+
+  def vector_info(self):
+    imageNP = np.array(self.grey_img)
+    maxPix = imageNP.max()
+    minPix = imageNP.min()
+    (ncols, nrows) = self.grey_img.size
+
+    d = dict();
+    d['imageNP'] = imageNP
+    d['maxPix'] = maxPix
+    d['minPix'] = minPix
+    d['ncols'] = ncols
+    d['nrows'] = nrows
+    return d
+
+
 
 first_image = MyImage(import_lat(), import_lon())
-
+grey_img = first_image.greyscale()
+vector_info = first_image.vector_info()
+verticies = np.zeros((vector_info['nrows'], vector_info['ncols'], 3))
 
 # Define the 4 vertices of the surface
 
-img = first_image.img
-grey_img = img.convert('L')
-
-
 
 #info for making vectors
-imageNP= np.array(grey_img)
-maxPix = imageNP.max()
-minPix = imageNP.min()
-(ncols,nrows)=grey_img.size
-verticies=np.zeros((nrows,ncols,3))
 
-for x in range(0,ncols):
-    for y in range(0,nrows):
-        pixelIntensity= imageNP[y][x]
-        z = (pixelIntensity * MAX_HEIGHT) / maxPix
+for x in range(0,vector_info['ncols']):
+    for y in range(0,vector_info['nrows']):
+        pixelIntensity= vector_info['imageNP'][y][x]
+        z = (pixelIntensity * MAX_HEIGHT) / vector_info['maxPix']
         #coordinates
         verticies[y][x]=(x,y,z)
 faces=[]
 
-for x in range(0, ncols-1):
-  for y in range(0, nrows-1):
+for x in range(0, vector_info['ncols']-1):
+  for y in range(0, vector_info['nrows']-1):
 
        #create face1
     vertice1=verticies[y][x]
