@@ -52,7 +52,6 @@ def get_image(lat, lon):
     BBX = [lat - corner_const, lat + corner_const]
 
     #API call information:
-
     request_url = 'https://wms.geonorge.no/skwms1/wms.hoyde-dom?' \
            'SERVICE=WMS&' \
            'VERSION=1.3.0&' \
@@ -85,7 +84,7 @@ class ImageSetup:
 
   def greyscale(self):
     img = self.img
-    self.grey_img = img.convert('L')  # Do not remove - For some reason it needs to be here even though API already sends greyscale image
+    self.grey_img = img.convert('L')  # Do not remove - API sends back an RGB image of grey pixels.
     return self.grey_img
 
     #values needed for further calculations
@@ -119,8 +118,9 @@ for x in range(0,vector_info['ncols']):
         z = (pixelIntensity * MAX_HEIGHT) / vector_info['maxPix']
         #coordinates
         verticies[y][x]=(x,y,z)
-faces=[]
 
+
+faces=[]
 
 #Creates verticies given height and surrounding heights
 for x in range(0, vector_info['ncols'] - 1):
