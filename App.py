@@ -91,9 +91,12 @@ class ImageSetup:
   def vector_info(self):
     # Define the 4 vertices of the surface
     imageNP = np.array(self.grey_img)
+    imageNP = np.pad(imageNP, pad_width=1, mode='constant', constant_values=0)   #Adds zeroes all the way around the array to give it borders so that it is 3D printable
     maxPix = imageNP.max()
     minPix = imageNP.min()
     (ncols, nrows) = self.grey_img.size
+    ncols = ncols + 2
+    nrows = nrows + 2
 
     d = dict();
     d['imageNP'] = imageNP
