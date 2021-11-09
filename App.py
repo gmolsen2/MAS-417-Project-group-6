@@ -1,7 +1,9 @@
 # This code will input coordinates in mainland Norway and output a .stl file of that area.
 # Originally written by K. M. Knausgård 2021-10-26.
+# Modified by GEIR MAGNE OLSEN, ROLKANA ANO, FREDRIK FRIGSTAD
 # Forked on 2021.10.29
-#
+# Uses python version 3.9.7
+
 from io import BytesIO
 import numpy as np
 import requests
@@ -98,7 +100,7 @@ class ImageSetup:
     ncols = ncols + 2
     nrows = nrows + 2
 
-    d = dict();
+    d = dict()
     d['imageNP'] = imageNP
     d['maxPix'] = maxPix
     d['minPix'] = minPix
